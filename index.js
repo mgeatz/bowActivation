@@ -48,31 +48,38 @@ exports.handler = (event, context, callback) => {
 
   } else {
     console.log('CHECK HEADERS...');
-    console.log('event.headers.bow ', event.headers.bow);
 
-    if (event.headers.bow === 'transactionverification') {
-      switch (event.httpMethod) {
-        case 'DELETE':
-          console.log('DELETE request...');
-          dynamo.deleteItem(JSON.parse(event.body), done);
-          break;
-        case 'GET':
-          console.log('GET request...');
-          dynamo.scan({ TableName: event.queryStringParameters.TableName }, done);
-          break;
-        case 'POST':
-          console.log('POST request...');
-          dynamo.putItem(JSON.parse(event.body), done);
-          break;
-        case 'PUT':
-          console.log('PUT request...');
-          dynamo.updateItem(JSON.parse(event.body), done);
-          break;
-        default:
-          console.log('ERROR finding request...');
-          done(new Error(`Unsupported method "${event.httpMethod}"`));
+    try {
+      console.log('event.headers.bow ', event.headers.bow);
+
+      if (event.headers.bow === 'transactionverification') {
+        switch (event.httpMethod) {
+          case 'DELETE':
+            console.log('DELETE request...');
+            dynamo.deleteItem(JSON.parse(event.body), done);
+            break;
+          case 'GET':
+            console.log('GET request...');
+            dynamo.scan({ TableName: event.queryStringParameters.TableName }, done);
+            break;
+          case 'POST':
+            console.log('POST request...');
+            dynamo.putItem(JSON.parse(event.body), done);
+            break;
+          case 'PUT':
+            console.log('PUT request...');
+            dynamo.updateItem(JSON.parse(event.body), done);
+            break;
+          default:
+            console.log('ERROR finding request...');
+            done(new Error(`Unsupported method "${event.httpMethod}"`));
+        }
       }
+    } catch (e) {
+      console.log('caught error');
+      done(new Error('incorrect headers'));
     }
+
 
   }
 
