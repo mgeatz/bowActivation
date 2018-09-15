@@ -54,10 +54,32 @@ exports.handler = (event, context, callback) => {
 
       if (event.headers.bow === 'transactionverification') {
         switch (event.httpMethod) {
-          case 'DELETE':
-            console.log('DELETE request...');
-            dynamo.deleteItem(JSON.parse(event.body), done);
+
+          case 'PATCH':
+            console.log('PATCH request to delete a record ', event);
+
+            var params = {
+              "Key": {
+                "TransactionId": JSON.parse(event.body).TransactionId
+              },
+              "TableName": "TestTable"
+            };
+
+            console.log('send these params to delete = ', params);
+
+            dynamo.deleteItem(params, function(err, data) {
+              if (err) {
+                console.log('ERROR with delete attempt...', err, err.stack);
+                done(err, data);
+                // an error occurred
+              } else {
+                console.log(data);
+                done(err, data);
+                // successful response
+              }
+            });
             break;
+
           case 'GET':
             console.log('GET request...');
             dynamo.scan({ TableName: event.queryStringParameters.TableName }, done);
