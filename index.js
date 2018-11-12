@@ -62,7 +62,7 @@ exports.handler = (event, context, callback) => {
               "Key": {
                 "TransactionId": JSON.parse(event.body).TransactionId
               },
-              "TableName": "TestTable"
+              "TableName": "MembersPendingActivation"
             };
 
             console.log('send these params to delete = ', params);
